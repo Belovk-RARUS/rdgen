@@ -837,6 +837,15 @@ jobs:
           githubToken: ${{ github.token }}
           setup: |
             ls -l "${PWD}"
+            if [ "${{ env.appname }}" != "rustdesk" ]; then
+              mv flatpak/rustdesk.json flatpak/${{ env.appname }}.json
+              mv flatpak/com.rustdesk.RustDesk.metainfo.xml flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
+              sed -ie "s|rustdesk|${{ env.appname }}|g" flatpak/${{ env.appname }}.json
+              sed -ie "s|com.rustdesk|com.${{ env.appname }}|g" flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
+              sed -ie "s|RustDesk|${{ env.appname }}|g" flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
+              cat flatpak/${{ env.appname }}.json
+              cat flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
+            fi 
           dockerRunArgs: |
             --volume "${PWD}:/workspace"
           shell: /bin/bash
@@ -844,15 +853,6 @@ jobs:
             apt-get update -y
             apt-get install -y git flatpak flatpak-builder
           run: |
-            if [ "${{ env.appname }}" != "rustdesk" ]; then
-            mv flatpak/rustdesk.json flatpak/${{ env.appname }}.json
-            mv flatpak/com.rustdesk.RustDesk.metainfo.xml flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
-            sed -ie "s|rustdesk|${{ env.appname }}|g" flatpak/${{ env.appname }}.json
-            sed -ie "s|com.rustdesk|com.${{ env.appname }}|g" flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
-            sed -ie "s|RustDesk|${{ env.appname }}|g" flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
-            cat flatpak/${{ env.appname }}.json
-            cat flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
-            fi 
             # disable git safe.directory
             git config --global --add safe.directory "*"
             pushd /workspace
