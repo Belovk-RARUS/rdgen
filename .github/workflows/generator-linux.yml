@@ -823,7 +823,8 @@ jobs:
 
       - name: Rename Binary
         run: |
-          mv ${{ env.filename }}-${{ matrix.job.arch }}.deb flatpak/rustdesk.deb
+          mv ${{ env.filename }}-${{ matrix.job.arch }}.deb flatpak/${{ env.appname }}.deb
+      
 
       - uses: rustdesk-org/run-on-arch-action@amd64-support
         name: Build rustdesk flatpak package for ${{ matrix.job.arch }}
@@ -843,6 +844,11 @@ jobs:
             apt-get update -y
             apt-get install -y git flatpak flatpak-builder
           run: |
+            mv flatpak/rustdesk.json flatpak/${{ env.appname }}.json
+            mv flatpak/com.rustdesk.RustDesk.metainfo.xml flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
+            sed -ie "s|rustdesk|${{ env.appname }}|g" flatpak/${{ env.appname }}.json
+            sed -ie "s|com.rustdesk|com.${{ env.appname }}|g" flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
+            sed -ie "s|RustDesk|${{ env.appname }}|g" flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
             # disable git safe.directory
             git config --global --add safe.directory "*"
             pushd /workspace
@@ -851,8 +857,8 @@ jobs:
             # package
             pushd flatpak
             git clone https://github.com/flathub/shared-modules.git --depth=1
-            flatpak-builder --user --install-deps-from=flathub -y --force-clean --repo=repo ./build ./rustdesk.json
-            flatpak build-bundle ./repo ${{ env.filename }}-${{ matrix.job.arch }}.flatpak com.rustdesk.RustDesk
+            flatpak-builder --user --install-deps-from=flathub -y --force-clean --repo=repo ./build ./${{ env.appname }}.json
+            flatpak build-bundle ./repo ${{ env.filename }}-${{ matrix.job.arch }}.flatpak com.${{ env.appname }}.${{ env.appname }}
 
       - name: send file to rdgen server
         if: ${{ env.rdgen == 'true' }}
