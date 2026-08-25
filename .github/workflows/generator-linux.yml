@@ -1305,8 +1305,7 @@ jobs:
               sed -ie "s|rustdesk|${{ env.appname }}|g" flatpak/*
               sed -ie "s|RustDesk|${{ env.appname }}|g" flatpak/*
               mv flatpak/rustdesk.deb "flatpak/${{ env.filename }}.deb" 2>/dev/null || true
-              mv flatpak/com.rustdesk.RustDesk.metainfo.xml flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
-              mv
+              mv flatpak/com.rustdesk.RustDesk.metainfo.xml "flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
             fi
             # disable git safe.directory
             git config --global --add safe.directory "*"
