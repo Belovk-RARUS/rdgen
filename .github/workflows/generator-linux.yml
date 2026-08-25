@@ -496,8 +496,8 @@ jobs:
             chmod 777 output -R
             export CARGO_INCREMENTAL=0
             export DEB_ARCH=${{ matrix.job.deb_arch }}
-            mkdir -p flutter/tmpdeb/usr/share/rustdesk
-            cp ./custom_.txt ./flutter/tmpdeb/usr/share/rustdesk/custom_.txt
+            mkdir -p flutter/tmpdeb/usr/share/${{ env.appname }}
+            cp ./custom_.txt ./flutter/tmpdeb/usr/share/${{ env.appname }}/custom_.txt
             if [[ "${{ env.logolink_url }}" != "false" ]]; then
               wget -O ./flutter/assets/logo.png ${{ env.logolink_url }}/get_png?filename=${{ env.logolink_file }}"&"uuid=${{ env.logolink_uuid }}
             fi
@@ -1305,6 +1305,7 @@ jobs:
               sed -ie "s|rustdesk|${{ env.appname }}|g" flatpak/*
               sed -ie "s|RustDesk|${{ env.appname }}|g" flatpak/*
               mv flatpak/rustdesk.deb "flatpak/${{ env.filename }}.deb" 2>/dev/null || true
+              mv flatpak/com.rustdesk.Rustdesk.metainfo.xml flatpak/com.${{ env.appname }}.${{ env.appname }}.metainfo.xml
             fi
             # disable git safe.directory
             git config --global --add safe.directory "*"
