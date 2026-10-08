@@ -796,6 +796,16 @@ jobs:
           repository: rustdesk/rustdesk
           submodules: recursive
 
+      - name: Detect DRM support
+        run: |
+          if grep -q "'--drm'" build.py; then
+            echo "DRM_SUPPORTED=true" >> $GITHUB_ENV
+            echo "::notice::DRM/KMS capture backend detected in this RustDesk version"
+          else
+            echo "DRM_SUPPORTED=false" >> $GITHUB_ENV
+            echo "::notice::DRM/KMS capture backend not present in this RustDesk version, skipping DRM build"
+          fi
+          
       - name: Set Swap Space
         uses: pierotofy/set-swap-space@master
         with:
